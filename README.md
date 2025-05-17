@@ -21,7 +21,7 @@ https://blackschole.streamlit.app/
 
 ## 🔧 Dependencies
 
-The application requires the following packages:
+The application requires the following packages (see `requirements.txt` for exact versions):
 
 - `streamlit`
 - `numpy`
@@ -38,4 +38,12 @@ Then run the dashboard using:
 
 ```bash
 streamlit run streamlit_app.py
+```
+
+## 🧪 Testing
+
+Unit tests are provided in the `tests/` directory. Run them with:
+
+```bash
+pytest
 ```
