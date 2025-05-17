@@ -35,7 +35,13 @@ K = st.sidebar.number_input(
     format="%.4f",
 )
 
-sigma = st.sidebar.slider("Volatility", min_value=0.05, max_value=1.0, value=0.2)
+sigma_pct = st.sidebar.slider(
+    "Volatility (%)",
+    min_value=5.0,
+    max_value=200.0,
+    value=20.0,
+)
+sigma = sigma_pct / 100.0
 T = st.sidebar.slider(
     "Time to Maturity (years)",
     min_value=0.01,
@@ -53,6 +59,7 @@ call_price, put_price = bs.calculate_prices()
 st.subheader("Option Prices")
 st.write(f"Call Price: {call_price:.4f}")
 st.write(f"Put Price: {put_price:.4f}")
+st.markdown("<br>", unsafe_allow_html=True)
 
 st.sidebar.subheader("Heatmap Ranges")
 spot_range = st.sidebar.slider(
@@ -61,12 +68,13 @@ spot_range = st.sidebar.slider(
     max_value=max(2 * S, 1000.0),
     value=(0.5 * S, 1.5 * S),
 )
-vol_range = st.sidebar.slider(
-    "Volatility Range",
-    min_value=0.05,
-    max_value=1.0,
-    value=(max(0.05, 0.5 * sigma), min(1.0, 1.5 * sigma)),
+vol_range_pct = st.sidebar.slider(
+    "Volatility Range (%)",
+    min_value=5.0,
+    max_value=200.0,
+    value=(max(5.0, 50.0 * sigma), min(200.0, 150.0 * sigma)),
 )
+vol_range = (vol_range_pct[0] / 100.0, vol_range_pct[1] / 100.0)
 
 S_grid = np.linspace(spot_range[0], spot_range[1], 50)
 vol_grid = np.linspace(vol_range[0], vol_range[1], 50)
@@ -95,7 +103,7 @@ fig = make_subplots(
         "Put P&L at Expiry",
     ),
     horizontal_spacing=0.15,
-    vertical_spacing=0.15,
+    vertical_spacing=0.25,
 )
 
 fig.add_trace(
