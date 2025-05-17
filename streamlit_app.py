@@ -8,8 +8,21 @@ from BlackScholes import BlackScholes
 st.title("Black-Scholes Option Pricing")
 
 # Individual option parameters
-S = st.slider("Spot Price", min_value=10.0, max_value=200.0, value=100.0)
-K = st.slider("Strike Price", min_value=10.0, max_value=200.0, value=100.0)
+# Allow arbitrary spot and strike prices instead of a fixed 10-200 range
+S = st.number_input(
+    "Spot Price",
+    min_value=0.0,
+    value=100.0,
+    step=0.01,
+    format="%.4f",
+)
+K = st.number_input(
+    "Strike Price",
+    min_value=0.0,
+    value=100.0,
+    step=0.01,
+    format="%.4f",
+)
 sigma = st.slider("Volatility", min_value=0.05, max_value=1.0, value=0.2)
 T = st.slider(
     "Time to Maturity (years)", min_value=0.01, max_value=2.0, value=1.0, step=0.01
@@ -26,8 +39,8 @@ st.write(f"Put Price: {put_price:.4f}")
 st.subheader("Heatmap Ranges")
 spot_range = st.slider(
     "Spot Price Range",
-    min_value=10.0,
-    max_value=200.0,
+    min_value=0.0,
+    max_value=max(2 * S, 1000.0),
     value=(0.5 * S, 1.5 * S),
 )
 vol_range = st.slider(
