@@ -21,7 +21,8 @@ https://blackschole.streamlit.app/
 
 ## 🔧 Dependencies
 
-The application requires the following packages (see `requirements.txt` for exact versions):
+The application requires the following packages (see `requirements.txt` for exact versions). The
+numpy and scipy versions have been bumped to ensure wheels are available for Python 3.12 and later:
 
 - `streamlit`
 - `numpy`
