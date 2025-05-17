@@ -6,9 +6,9 @@ https://blackschole.streamlit.app/
 
 ## 🚀 Features:
 
-1. **Options Pricing Visualization**: 
-   - Displays both Call and Put option prices using an interactive heatmap.
-   - The heatmap dynamically updates as you adjust parameters like Spot Price, Volatility, and Time to Maturity.
+1. **Options Pricing Visualization**:
+   - Displays Call and Put option prices using interactive heatmaps.
+   - Heatmaps update dynamically as you adjust parameters such as Spot Price, Volatility and Time to Maturity.
    
 2. **Interactive Dashboard**:
    - The dashboard allows real-time updates to the Black-Scholes model parameters.
@@ -20,8 +20,15 @@ https://blackschole.streamlit.app/
 
 ## 🔧 Dependencies:
 
-- `yfinance`: To fetch current asset prices.
-- `numpy`: For numerical operations.
-- `matplotlib`: For heatmap visualization.
+- `streamlit`: Runs the dashboard.
+- `numpy`: Numerical operations.
+- `scipy`: Provides the normal distribution for pricing.
+- `plotly`: Used for interactive heatmaps.
 
 
+
+To launch the application locally, install the dependencies and run:
+
+```bash
+streamlit run streamlit_app.py
+```
