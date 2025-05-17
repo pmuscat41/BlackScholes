@@ -40,6 +40,12 @@ Then run the dashboard using:
 ```bash
 streamlit run streamlit_app.py
 ```
+If the `streamlit` command is not available on your system, you can also run the
+app with:
+
+```bash
+python -m streamlit run streamlit_app.py
+```
 
 ## 🧪 Testing
 
