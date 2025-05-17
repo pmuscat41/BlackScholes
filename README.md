@@ -18,16 +18,22 @@ https://blackschole.streamlit.app/
 3. **Customizable Parameters**:
    - Set custom ranges for Spot Price and Volatility to generate a comprehensive view of option prices under different market conditions.
 
-## 🔧 Dependencies:
+## 🔧 Dependencies
 
-- `streamlit`: Runs the dashboard.
-- `numpy`: Numerical operations.
-- `scipy`: Provides the normal distribution for pricing.
-- `plotly`: Used for interactive heatmaps.
+The application requires the following packages:
 
+- `streamlit`
+- `numpy`
+- `scipy`
+- `plotly`
 
+Install them with:
 
-To launch the application locally, install the dependencies and run:
+```bash
+pip install -r requirements.txt
+```
+
+Then run the dashboard using:
 
 ```bash
 streamlit run streamlit_app.py
