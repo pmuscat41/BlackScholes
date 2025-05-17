@@ -35,9 +35,15 @@ K = st.sidebar.number_input(
     format="%.4f",
 )
 
-sigma = st.sidebar.slider(
-    "Volatility", min_value=0.05, max_value=2.0, value=0.2
+
+sigma_pct = st.sidebar.slider(
+    "Volatility (%)",
+    min_value=5.0,
+    max_value=200.0,
+    value=20.0,
 )
+sigma = sigma_pct / 100.0
+
 T = st.sidebar.slider(
     "Time to Maturity (years)",
     min_value=0.01,
@@ -64,12 +70,15 @@ spot_range = st.sidebar.slider(
     max_value=max(2 * S, 1000.0),
     value=(0.5 * S, 1.5 * S),
 )
-vol_range = st.sidebar.slider(
-    "Volatility Range",
-    min_value=0.05,
-    max_value=2.0,
-    value=(max(0.05, 0.5 * sigma), min(2.0, 1.5 * sigma)),
+
+vol_range_pct = st.sidebar.slider(
+    "Volatility Range (%)",
+    min_value=5.0,
+    max_value=200.0,
+    value=(max(5.0, 50.0 * sigma), min(200.0, 150.0 * sigma)),
+
 )
+vol_range = (vol_range_pct[0] / 100.0, vol_range_pct[1] / 100.0)
 
 S_grid = np.linspace(spot_range[0], spot_range[1], 50)
 vol_grid = np.linspace(vol_range[0], vol_range[1], 50)
