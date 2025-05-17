@@ -48,11 +48,23 @@ for i, s_val in enumerate(S_grid):
         call_grid[i, j] = c
         put_grid[i, j] = p
 
+# Payoff at expiry minus the option price (P&L)
+call_payoff = np.maximum(S_grid[:, None] - K, 0)
+put_payoff = np.maximum(K - S_grid[:, None], 0)
+call_pnl_grid = call_payoff - call_grid
+put_pnl_grid = put_payoff - put_grid
+
 fig = make_subplots(
-    rows=1,
+    rows=2,
     cols=2,
-    subplot_titles=("Call Price", "Put Price"),
+    subplot_titles=(
+        "Call Price",
+        "Put Price",
+        "Call P&L at Expiry",
+        "Put P&L at Expiry",
+    ),
     horizontal_spacing=0.15,
+    vertical_spacing=0.15,
 )
 
 fig.add_trace(
@@ -65,11 +77,25 @@ fig.add_trace(
     row=1,
     col=2,
 )
+fig.add_trace(
+    go.Heatmap(x=vol_grid, y=S_grid, z=call_pnl_grid, colorscale="RdYlGn"),
+    row=2,
+    col=1,
+)
+fig.add_trace(
+    go.Heatmap(x=vol_grid, y=S_grid, z=put_pnl_grid, colorscale="RdYlGn"),
+    row=2,
+    col=2,
+)
 
 fig.update_xaxes(title_text="Volatility", row=1, col=1)
 fig.update_xaxes(title_text="Volatility", row=1, col=2)
+fig.update_xaxes(title_text="Volatility", row=2, col=1)
+fig.update_xaxes(title_text="Volatility", row=2, col=2)
 fig.update_yaxes(title_text="Spot Price", row=1, col=1)
 fig.update_yaxes(title_text="Spot Price", row=1, col=2)
-fig.update_layout(title="Option Price Heatmaps")
+fig.update_yaxes(title_text="Spot Price", row=2, col=1)
+fig.update_yaxes(title_text="Spot Price", row=2, col=2)
+fig.update_layout(title="Option Price and P&L Heatmaps")
 
 st.plotly_chart(fig, use_container_width=True)

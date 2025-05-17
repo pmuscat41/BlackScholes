@@ -9,6 +9,7 @@ https://blackschole.streamlit.app/
 1. **Options Pricing Visualization**:
    - Displays Call and Put option prices using interactive heatmaps.
    - Heatmaps update dynamically as you adjust parameters such as Spot Price, Volatility and Time to Maturity.
+   - Includes profit/loss surfaces at expiry showing payoff minus the option premium.
    
 2. **Interactive Dashboard**:
    - The dashboard allows real-time updates to the Black-Scholes model parameters.
