@@ -1,71 +1,75 @@
-# --- BlackScholes.py -------------------------------------------------
-from math import log, sqrt, exp
-from scipy.stats import norm
+import numpy as np
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import streamlit as st
 
+from BlackScholes import BlackScholes
 
-class BlackScholes:
-    """
-    Vanilla-option pricer with Greeks.
-    • Handles the special case T = 0  (returns intrinsic value).
-    """
+st.title("Black-Scholes Option Pricing")
 
-    def __init__(
-        self,
-        current_price: float,
-        strike: float,
-        time_to_maturity: float,   # in years
-        volatility: float,         # annualised, 0-1
-        interest_rate: float,      # risk-free, 0-1
-    ):
-        self.S = current_price
-        self.K = strike
-        self.T = time_to_maturity
-        self.sigma = volatility
-        self.r = interest_rate
+# Individual option parameters
+S = st.slider("Spot Price", min_value=10.0, max_value=200.0, value=100.0)
+K = st.slider("Strike Price", min_value=10.0, max_value=200.0, value=100.0)
+sigma = st.slider("Volatility", min_value=0.05, max_value=1.0, value=0.2)
+T = st.slider(
+    "Time to Maturity (years)", min_value=0.01, max_value=2.0, value=1.0, step=0.01
+)
+r = st.slider("Interest Rate", min_value=0.0, max_value=0.2, value=0.05, step=0.001)
 
-        # outputs
-        self.call_price = 0.0
-        self.put_price = 0.0
-        self.call_delta = 0.0
-        self.put_delta = 0.0
-        self.call_gamma = 0.0
-        self.put_gamma = 0.0
+bs = BlackScholes(T, K, S, sigma, r)
+call_price, put_price = bs.calculate_prices()
 
-    # -----------------------------------------------------------------
-    def _d1_d2(self):
-        d1 = (
-            log(self.S / self.K)
-            + (self.r + 0.5 * self.sigma**2) * self.T
-        ) / (self.sigma * sqrt(self.T))
-        return d1, d1 - self.sigma * sqrt(self.T)
+st.subheader("Option Prices")
+st.write(f"Call Price: {call_price:.4f}")
+st.write(f"Put Price: {put_price:.4f}")
 
-    # -----------------------------------------------------------------
-    def calculate_prices(self):
-        """
-        Returns (call_price, put_price) and populates Greeks.
-        """
-        # ---------- expiry: intrinsic value only ---------------------
-        if self.T <= 0.0:
-            self.call_price = max(0.0, self.S - self.K)
-            self.put_price = max(0.0, self.K - self.S)
+st.subheader("Heatmap Ranges")
+spot_range = st.slider(
+    "Spot Price Range",
+    min_value=10.0,
+    max_value=200.0,
+    value=(0.5 * S, 1.5 * S),
+)
+vol_range = st.slider(
+    "Volatility Range",
+    min_value=0.05,
+    max_value=1.0,
+    value=(max(0.05, 0.5 * sigma), min(1.0, 1.5 * sigma)),
+)
 
-            self.call_delta = 1.0 if self.S > self.K else 0.0
-            self.put_delta = -1.0 if self.S < self.K else 0.0
-            self.call_gamma = self.put_gamma = 0.0
-            return self.call_price, self.put_price
+S_grid = np.linspace(spot_range[0], spot_range[1], 50)
+vol_grid = np.linspace(vol_range[0], vol_range[1], 50)
+call_grid = np.zeros((len(S_grid), len(vol_grid)))
+put_grid = np.zeros_like(call_grid)
 
-        # ---------- standard Black–Scholes ---------------------------
-        d1, d2 = self._d1_d2()
-        Nd1, Nd2 = norm.cdf(d1), norm.cdf(d2)
-        Nmd1, Nmd2 = norm.cdf(-d1), norm.cdf(-d2)
+for i, s_val in enumerate(S_grid):
+    for j, v_val in enumerate(vol_grid):
+        c, p = BlackScholes(T, K, s_val, v_val, r).calculate_prices()
+        call_grid[i, j] = c
+        put_grid[i, j] = p
 
-        disc = exp(-self.r * self.T)
-        self.call_price = self.S * Nd1 - self.K * disc * Nd2
-        self.put_price = self.K * disc * Nmd2 - self.S * Nmd1
+fig = make_subplots(
+    rows=1,
+    cols=2,
+    subplot_titles=("Call Price", "Put Price"),
+    horizontal_spacing=0.15,
+)
 
-        self.call_delta = Nd1
-        self.put_delta = Nd1 - 1.0
-        self.call_gamma = self.put_gamma = (
-            norm.pdf(d1) / (self.S * self.sigma * sqrt(self.T))
-        )
-        return self.call_price, self.put_price
+fig.add_trace(
+    go.Heatmap(x=vol_grid, y=S_grid, z=call_grid, colorscale="Viridis"),
+    row=1,
+    col=1,
+)
+fig.add_trace(
+    go.Heatmap(x=vol_grid, y=S_grid, z=put_grid, colorscale="Viridis"),
+    row=1,
+    col=2,
+)
+
+fig.update_xaxes(title_text="Volatility", row=1, col=1)
+fig.update_xaxes(title_text="Volatility", row=1, col=2)
+fig.update_yaxes(title_text="Spot Price", row=1, col=1)
+fig.update_yaxes(title_text="Spot Price", row=1, col=2)
+fig.update_layout(title="Option Price Heatmaps")
+
+st.plotly_chart(fig, use_container_width=True)
