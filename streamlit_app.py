@@ -35,7 +35,9 @@ K = st.sidebar.number_input(
     format="%.4f",
 )
 
-sigma = st.sidebar.slider("Volatility", min_value=0.05, max_value=1.0, value=0.2)
+sigma = st.sidebar.slider(
+    "Volatility", min_value=0.05, max_value=2.0, value=0.2
+)
 T = st.sidebar.slider(
     "Time to Maturity (years)",
     min_value=0.01,
@@ -53,6 +55,7 @@ call_price, put_price = bs.calculate_prices()
 st.subheader("Option Prices")
 st.write(f"Call Price: {call_price:.4f}")
 st.write(f"Put Price: {put_price:.4f}")
+st.markdown("<br>", unsafe_allow_html=True)
 
 st.sidebar.subheader("Heatmap Ranges")
 spot_range = st.sidebar.slider(
@@ -64,8 +67,8 @@ spot_range = st.sidebar.slider(
 vol_range = st.sidebar.slider(
     "Volatility Range",
     min_value=0.05,
-    max_value=1.0,
-    value=(max(0.05, 0.5 * sigma), min(1.0, 1.5 * sigma)),
+    max_value=2.0,
+    value=(max(0.05, 0.5 * sigma), min(2.0, 1.5 * sigma)),
 )
 
 S_grid = np.linspace(spot_range[0], spot_range[1], 50)
@@ -95,7 +98,7 @@ fig = make_subplots(
         "Put P&L at Expiry",
     ),
     horizontal_spacing=0.15,
-    vertical_spacing=0.15,
+    vertical_spacing=0.25,
 )
 
 fig.add_trace(
